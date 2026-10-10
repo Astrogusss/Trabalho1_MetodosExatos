@@ -1,7 +1,7 @@
 import pulp
-from p2_primal_simplex import lerEntradas
+from p2_primal_dual import lerEntrada
 
-V, E, k, arestas, commodits = lerEntradas("mc_instance5.max")
+V, E, k, arestas, commodits = lerEntrada("mc_instance5.max")
 
 modelo = pulp.LpProblem("Fluxo_Multicommodity", pulp.LpMaximize)
 
