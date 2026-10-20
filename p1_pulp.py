@@ -2,6 +2,18 @@ import time
 import pulp
 from pulp import LpProblem, LpMinimize, LpVariable, lpSum
 
+def nova_variavel(prob, nome, lowBound=None):
+    # no PuLP 4.x as variaveis sao criadas pelo proprio problema
+    if hasattr(prob, "add_variable"):
+        return prob.add_variable(nome, lowBound=lowBound)
+    return LpVariable(nome, lowBound=lowBound)
+
+def solver_padrao():
+    # o PuLP 4.x nao vem mais com o CBC, usa o HiGHS (pip install highspy)
+    if hasattr(pulp, "PULP_CBC_CMD"):
+        return pulp.PULP_CBC_CMD(msg=False)
+    return pulp.HiGHS(msg=False)
+
 def resolver_p1(dados):
     n = dados['num_vertices']
     arestas = dados['arestas']
@@ -11,8 +23,8 @@ def resolver_p1(dados):
 
     prob = LpProblem("P1", LpMinimize)
 
-    d = {u: LpVariable(f"d_{u}", lowBound=0) for u in range(1, n + 1)}
-    x = {e: LpVariable(f"x_{e}", lowBound=0) for e in range(len(arestas))}
+    d = {u: nova_variavel(prob, f"d_{u}", lowBound=0) for u in range(1, n + 1)}
+    x = {e: nova_variavel(prob, f"x_{e}", lowBound=0) for e in range(len(arestas))}
 
     prob += lpSum(arestas[e][2] * x[e] for e in range(len(arestas))), "Custo_Total"
 
@@ -24,7 +36,7 @@ def resolver_p1(dados):
     prob += d[t] == 1, "fix_t"
 
     inicio = time.time()
-    prob.solve(pulp.PULP_CBC_CMD(msg=False))
+    prob.solve(solver_padrao())
     fim = time.time()
 
     return pulp.value(prob.objective), fim - inicio

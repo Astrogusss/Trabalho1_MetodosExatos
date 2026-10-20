@@ -1,6 +1,4 @@
-
-    
-  
+\
 import os
 import glob
 from p1_primal_dual import modelar_corte_minimo, resolver_primal_dual

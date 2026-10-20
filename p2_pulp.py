@@ -1,6 +1,7 @@
 import time
 import pulp
-from pulp import LpProblem, LpMaximize, LpVariable, lpSum
+from pulp import LpProblem, LpMaximize, lpSum
+from p1_pulp import nova_variavel, solver_padrao
 
 def resolver_p2(dados):
     arestas = dados['arestas']
@@ -20,7 +21,7 @@ def resolver_p2(dados):
     f = {}
     for i in commodities:
         for u, v, e, c in arcos:
-            f[(i, u, v, e)] = LpVariable(f"f_{i}_{u}_{v}_{e}", lowBound=0)
+            f[(i, u, v, e)] = nova_variavel(prob, f"f_{i}_{u}_{v}_{e}", lowBound=0)
 
     objetivo_termos = []
     for i in commodities:
@@ -49,7 +50,7 @@ def resolver_p2(dados):
             prob += (saindo - entrando == 0), f"cons_{i}_{w}"
 
     inicio = time.time()
-    prob.solve(pulp.PULP_CBC_CMD(msg=False))
+    prob.solve(solver_padrao())
     fim = time.time()
 
     return pulp.value(prob.objective), fim - inicio

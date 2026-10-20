@@ -28,12 +28,14 @@ def ler_instancia(caminho_arquivo):
 
     return num_vertices, fonte, sorvedouro, arestas
 
+
 def aplicar_pivo(tableau, linha, coluna):
     tableau[linha] = tableau[linha] / tableau[linha, coluna]
     
     for i in range(len(tableau)):
         if i != linha:
             fator = tableau[i, coluna]
+            # a coluna vira identidade e a variavel entra na base
             tableau[i] = tableau[i] - (fator * tableau[linha])
 
 def rodar_simplex(tableau, base, colunas_permitidas=[]):
